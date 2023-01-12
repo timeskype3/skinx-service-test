@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT;
+const port = process.env.SERVICE_PORT;
 
 app.post('/', (req: Request, res: Response) => {
   res.send('Test SkinX Service');
