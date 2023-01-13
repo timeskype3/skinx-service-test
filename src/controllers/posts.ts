@@ -27,6 +27,7 @@ const getAllPosts = async (req: Request, res: Response) => {
       },
       {
         $project: {
+          content: 0,
           postedById: 0,
           postedBy: {
             password: 0,

@@ -4,10 +4,10 @@ type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
 export interface IPost {
   title: string,
-  content: string,
+  content?: string,
   postedAt: string,
   postedById: Types.ObjectId,
-  tags: string[],
+  tags?: string[],
 }
 
 export interface IPostJsonImport extends Omit<IPost, 'postedById'> {
