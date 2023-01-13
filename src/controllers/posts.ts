@@ -55,9 +55,58 @@ const getPostById = async (req: Request, res: Response) => {
   }
 }
 
+const getPostsByTags = async (req: Request, res: Response) => {
+  let limit: number = +(req.query.limit as string) || 10;
+  const tagsString: string = req.query.tags as string || '';
+  try {
+    const tags = tagsString.split(",");
+    const pipline = [
+      {
+        $match: {
+          tags: {
+            $all: tags,
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'postedById',
+          foreignField: '_id',
+          as: 'postedBy',
+        }
+      },
+      {
+        $unwind: '$postedBy',
+      },
+      {
+        $project: {
+          content: 0,
+          postedById: 0,
+          postedBy: {
+            password: 0,
+          },
+        }
+      },
+      {
+        $limit: limit
+      }]
+    const posts = await Post.aggregate(pipline);
+    if (posts.length) {
+      res.status(200).send(posts);
+    } else {
+      res.status(404).send("Post not found");
+    }
+  } catch (error: unknown) {
+    res.status(500).json('error');
+    console.log(error);
+  }
+}
+
 
 export default {
   createPost,
   getAllPosts,
   getPostById,
+  getPostsByTags,
 }

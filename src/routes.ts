@@ -11,5 +11,6 @@ router.post('/login', usersController.login);
 router.route('/profile').get(auth, usersController.getProfile);
 router.route('/posts').get(auth, postsController.getAllPosts).post(auth, postsController.createPost);
 router.route('/posts/:id').get(auth, postsController.getPostById);
+router.route('/search/tags').get(auth, postsController.getPostsByTags);
 
 export = router;
