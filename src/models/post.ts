@@ -6,19 +6,20 @@ export interface IPost {
   title: string,
   content: string,
   postedAt: string,
-  postedBy: Types.ObjectId,
+  postedById: Types.ObjectId,
   tags: string[],
 }
 
-export interface IPostJsonImport extends Omit<IPost, 'postedBy'> {
-  postedBy: any
+export interface IPostJsonImport extends Omit<IPost, 'postedById'> {
+  postedById?: Types.ObjectId,
+  postedBy?: string,
 }
 
 const postSchema: Schema = new Schema({
   title: { type: String, text: true },
   content: { type: String, default: null },
   postedAt: { type: Date },
-  postedBy: { type: Types.ObjectId, required: true },
+  postedById: { type: Types.ObjectId, required: true },
   tags: [{ type: String }],
 })
 

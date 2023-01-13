@@ -28,15 +28,15 @@ const createUsersByPosts = async (
   console.log('Start create users');
   try {
     let countUser = 0;
-    const postsWithUserId = [...posts];
+    const postsWithUserId = [];
     const createUser = async (post: IPostJsonImport) => {
       const isDuplicate = await User.find({
-        username: post.postedBy.toLowerCase()
+        username: post.postedBy?.toLowerCase()
       });
       if (!(isDuplicate.length)) {
         const res = await User.create({
           name: post.postedBy,
-          username: post.postedBy.toLowerCase(),
+          username: post.postedBy?.toLowerCase(),
           password: passwordDefault,
         });
         countUser++;
@@ -47,10 +47,12 @@ const createUsersByPosts = async (
     }
     for (let i = 0; i < posts.length; i++) {
       const userId = await createUser(posts[i])
-      postsWithUserId[i].postedBy = userId;
+      delete posts[i].postedBy
+      posts[i].postedById = userId;
+      postsWithUserId.push(posts[i])
     }
     console.log(`Create ${countUser} users: Success`);
-    return postsWithUserId;
+    return postsWithUserId as IPost[];
   } catch (error: unknown) {
     console.log('CreateUsersByPosts Error: ', error);
     return [];

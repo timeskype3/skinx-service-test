@@ -1,13 +1,13 @@
-import User, { IUserResponse } from '../models/user';
 import { Request, Response } from 'express';
 import jwt, { Secret } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import User, { IUserResponse } from '../models/user';
+import { CustomRequest } from '../middleware/auth';
 
-const SECRET_KEY: Secret = 'SkinxSecretKey';
+export const SECRET_KEY: Secret = 'SkinxSecretKey';
 
 interface jwtUserEncodedProps {
   user: any,
-  SECRET_KEY: Secret,
   expiresIn?: string,
 }
 
@@ -39,6 +39,45 @@ const createUser = async (req: Request, res: Response) => {
   }
 }
 
+const login = async (req: Request, res: Response) => {
+  try {
+    const { username, password } = req.body;
+    if (!(username && password)) {
+      res.status(400).send("All input is required");
+    }
+    const user = await User.findOne({ username }).lean();
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const token = jwtUserEncoded({ user })
+      const userResponse: IUserResponse = { ...user };
+      delete userResponse.password;
+      userResponse.token = token;
+      res.status(200).json(userResponse);
+      return;
+    }
+    res.status(401).send("Invalid Credentials");
+  } catch (error: unknown) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+}
+
+const getProfile = async (req: Request, res: Response) => {
+  const tokenDecoded = (req as CustomRequest).user;
+  try {
+    const user = await User.findOne({ _id: tokenDecoded.user_id }).lean();
+    if (user) {
+      const userResponse: IUserResponse = { ...user };
+      delete userResponse.password;
+      res.status(200).json(userResponse);
+    }
+  } catch (error: unknown) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+}
+
 export default {
-  createUser
+  createUser,
+  login,
+  getProfile,
 }
