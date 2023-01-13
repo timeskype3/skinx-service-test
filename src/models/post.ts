@@ -1,11 +1,17 @@
-import mongoose, { ObjectId, Schema, Types } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
+
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
 export interface IPost {
   title: string,
   content: string,
   postedAt: string,
-  postedBy: ObjectId,
+  postedBy: Types.ObjectId,
   tags: string[],
+}
+
+export interface IPostJsonImport extends Omit<IPost, 'postedBy'> {
+  postedBy: any
 }
 
 const postSchema: Schema = new Schema({

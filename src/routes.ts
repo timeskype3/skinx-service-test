@@ -4,7 +4,7 @@ import postsController from './controllers/posts';
 
 const router = express.Router();
 
-router.post('/test', (req, res) => res.send('Test SkinX Service'));
+router.get('/test', (req, res) => res.send('Test SkinX Service'));
 router.post('/register', usersController.createUser);
 router.post('/posts/create', postsController.createPost);
 
