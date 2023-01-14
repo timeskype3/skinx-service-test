@@ -12,7 +12,12 @@ const createPost = async (req: Request, res: Response) => {
 
 const getAllPosts = async (req: Request, res: Response) => {
   try {
-    let limit: number = +(req.query.limit as string) || 10;
+    const limit: number = +(req.query.limit as string) || 10;
+    const page: number = +(req.query.page as string) || 1;
+    let skip: number = 0;
+    if (page > 1) {
+      skip = (page - 1) * limit;
+    }
     const posts = await Post.aggregate([
       {
         $lookup: {
@@ -34,6 +39,7 @@ const getAllPosts = async (req: Request, res: Response) => {
           },
         }
       },
+      { $skip: skip },
       { $limit: limit },
     ]);
     res.status(200).send(posts);
@@ -57,6 +63,11 @@ const getPostById = async (req: Request, res: Response) => {
 
 const getPostsByTags = async (req: Request, res: Response) => {
   let limit: number = +(req.query.limit as string) || 10;
+  const page: number = +(req.query.page as string) || 1;
+  let skip: number = 0;
+  if (page > 1) {
+    skip = (page - 1) * limit;
+  }
   const tagsString: string = req.query.tags as string || '';
   try {
     const tags = tagsString.split(",");
@@ -88,6 +99,7 @@ const getPostsByTags = async (req: Request, res: Response) => {
           },
         }
       },
+      { $skip: skip },
       {
         $limit: limit
       }]
