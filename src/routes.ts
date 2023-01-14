@@ -5,7 +5,7 @@ import postsController from './controllers/posts';
 
 const router = express.Router();
 
-router.get('/test', auth, (req, res) => res.send('Test SkinX Service'));
+router.get('/test', (req, res) => res.send('Test SkinX Service'));
 router.post('/register', usersController.createUser);
 router.post('/login', usersController.login);
 router.route('/profile').get(auth, usersController.getProfile);
