@@ -50,7 +50,12 @@ const login = async (req: Request, res: Response) => {
       const token = jwtUserEncoded({ user })
       const userResponse: IUserResponse = { ...user };
       delete userResponse.password;
-      userResponse.token = token;
+      res.cookie('token', token, {
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      });
       res.status(200).json(userResponse);
       return;
     }
@@ -59,6 +64,22 @@ const login = async (req: Request, res: Response) => {
     res.status(500).json(error);
     console.log(error);
   }
+}
+
+const logout = async (req: Request, res: Response) => {
+  const { cookies } = req;
+  const jwt = cookies.token;
+  if (!jwt) {
+    return res.status(401).json('Unauthorized token');
+  }
+  res.cookie('token', null, {
+    httpOnly: true,
+    sameSite: 'strict',
+    secure: true,
+    maxAge: -1,
+  });
+  res.status(200).send('Logout success');
+  return;
 }
 
 const getProfile = async (req: Request, res: Response) => {
@@ -79,5 +100,6 @@ const getProfile = async (req: Request, res: Response) => {
 export default {
   createUser,
   login,
+  logout,
   getProfile,
 }

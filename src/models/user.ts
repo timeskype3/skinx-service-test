@@ -6,7 +6,6 @@ export interface IUser {
   name: string,
   username: string,
   password: string,
-  token?: string,
 }
 
 export interface IUserResponse extends Omit<IUser, 'password'> {

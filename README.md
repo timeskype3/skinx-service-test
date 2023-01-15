@@ -25,13 +25,13 @@ This step will take a couple minutes to process, wait until `Migrate: Success` a
 to start up the skinx-service then it will run on port 4001
 
 #### `There are  8 routes`
-For paths that required authentication need to be attached with `x-access-token`: token in headers every time requesting.
 
 | path         | method | AUTH    | definition                       |
 |--------------|--------|---------|----------------------------------|
 | /test        |   GET  |    no   | test connection                  |
 | /register    |  POST  |    no   | Create user accont               |
 | /login       |  POST  |    no   | Login to get access token        |
+| /logout      |   GET  |    no   | Logout to remove access token    |
 | /profile     |   GET  | require | Get my profile                   |
 | /posts       |   GET  | require | Get all posts                    |
 | /posts       |  POST  | require | Create post                      |

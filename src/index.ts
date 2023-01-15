@@ -2,6 +2,7 @@ import http from 'http';
 import express, { Express, Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import routes from './routes';
 
@@ -14,12 +15,14 @@ const PORT = process.env.SERVICE_PORT;
 const httpServer = http.createServer(app);
 
 app.use(morgan('dev'));
+app.use(cookieParser());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Headers', 'origin, x-requested-with, Content-Type ,Accept, Authorization, x-access-token');
   if (req.method === 'OPTIONS') {
     res.header('Access-Control-Allow-Methods', 'GET, PATCH, DELETE, POST');
